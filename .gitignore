@@ -34,3 +34,7 @@ test-mode.flag
 !release/MortalFastCombat-1.1.2-Windows-x64-LOMAssistant.zip
 
 !release/MortalFastCombat-1.1.3-Windows-x64-LOMAssistant.zip
+
+tests/
+Test.ps1
+docs/VALIDATION*.md
