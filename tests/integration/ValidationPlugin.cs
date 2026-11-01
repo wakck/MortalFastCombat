@@ -6,6 +6,9 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.Serialization;
 using BepInEx;
+#if BEPINEX6
+using BaseUnityPlugin = BepInEx.Unity.Mono.BaseUnityPlugin;
+#endif
 using BepInEx.Configuration;
 using HarmonyLib;
 using Mortal.Combat;
@@ -15,7 +18,12 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 [BepInPlugin("local.legendofmortal.fastcombat.validation", "Fast Combat Validation (test only)", "1.0.0")]
+#if BEPINEX6
+[BepInDependency("LOMAssistant")]
 [BepInDependency(Plugin.Guid)]
+#else
+[BepInDependency(Plugin.Guid)]
+#endif
 public sealed partial class ValidationPlugin : BaseUnityPlugin
 {
     private static string root, profile;
@@ -26,9 +34,9 @@ public sealed partial class ValidationPlugin : BaseUnityPlugin
     private float nextPoll;
     private void Awake()
     {
-        root = Path.Combine(Paths.GameRootPath, "MortalFastCombat/validation/v110");
+        root = Path.Combine(Paths.GameRootPath, "validation");
         if (Array.IndexOf(Environment.GetCommandLineArgs(), "-fastcombat-test-profile") < 0 && !File.Exists(Path.Combine(root,"test-mode.flag"))) { enabled = false; return; }
-        profile = Path.Combine(root, "profile");
+        profile = Path.Combine(Paths.GameRootPath, "sandbox/persistent/coexist-test");
         if (!Directory.Exists(profile)) throw new DirectoryNotFoundException("Validation save copy missing");
         patches = new Harmony("local.legendofmortal.fastcombat.validation");
         foreach (string method in new string[] { "GetSaveDataFile", "GetLegendDataFile", "GetBackupDataFile" })
@@ -36,7 +44,13 @@ public sealed partial class ValidationPlugin : BaseUnityPlugin
         foreach(string method in new string[]{"ExecuteSaveData","ExecuteSaveJsonData"})
             patches.Patch(AccessTools.Method(typeof(SaveSystem),method),prefix:new HarmonyMethod(typeof(ValidationPlugin),"GuardWrite"));
         patches.Patch(AccessTools.Method(typeof(SaveSystem),"GetUserFolder"),prefix:new HarmonyMethod(typeof(ValidationPlugin),"TestUser"));
+        #if BEPINEX6
+        plugin = (Plugin)BepInEx.Unity.Mono.Bootstrap.UnityChainloader.Instance.Plugins[Plugin.Guid].Instance;
+#else
         plugin = (Plugin)BepInEx.Bootstrap.Chainloader.PluginInfos[Plugin.Guid].Instance;
+#endif
+        if(plugin==null)throw new InvalidOperationException("Production MFC plugin was not loaded");
+        SetupCoexist();
         pluginPolicy=(Func<Type,RoutinePolicy>)Delegate.CreateDelegate(typeof(Func<Type,RoutinePolicy>),AccessTools.Method(typeof(Plugin),"Classify"));
         Application.logMessageReceived += CaptureErrors;
         Log("HOST name="+gameObject.name+" active="+gameObject.activeInHierarchy+" enabled="+enabled);
@@ -49,13 +63,13 @@ public sealed partial class ValidationPlugin : BaseUnityPlugin
         SetupReplayHooks();
         SetupTailProbe();
         SetupV110();
-        StartCoroutine(NotificationFixtures());
+        StartCoroutine(StartupFixtures());
     }
     private void OnEnable() { if(root!=null)Log("VALIDATION OnEnable"); }
     private void Start() { if(patches!=null)Log("VALIDATION Start"); }
     private void OnDisable() { if(patches!=null)Log("VALIDATION OnDisable"); }
     private static void RedirectPath(ref string __result) { __result = Path.Combine(profile, Path.GetFileName(__result)); }
-    private static bool TestUser(ref string __result) {__result="validation-v110";return false;}
+    private static bool TestUser(ref string __result) {__result="coexist-test";return false;}
     private static void GuardWrite(string __0) {
         string prefix=Path.GetFullPath(profile).TrimEnd(Path.DirectorySeparatorChar,Path.AltDirectorySeparatorChar)+Path.DirectorySeparatorChar;
         if(!Path.GetFullPath(__0).StartsWith(prefix,StringComparison.OrdinalIgnoreCase))throw new InvalidOperationException("Blocked test write outside isolated profile: "+__0);
@@ -196,7 +210,7 @@ public sealed partial class ValidationPlugin : BaseUnityPlugin
     private void Update()
     {
         if(replaying){QualitySettings.vSyncCount=0;Application.targetFrameRate=30;}
-        if (patches == null || Time.realtimeSinceStartup < nextPoll) return;
+        if (patches == null || !startupFixturesReady || Time.realtimeSinceStartup < nextPoll) return;
         nextPoll = Time.realtimeSinceStartup + 0.1f;
         string path = Path.Combine(root,"command.txt");
         if(!File.Exists(path)) return;
@@ -205,7 +219,11 @@ public sealed partial class ValidationPlugin : BaseUnityPlugin
         try {
             CombatManager manager=CombatManager.Instance;
             if(command=="quit") { Application.Quit(); return; }
-            if(command=="persistence-check") {StartCoroutine(PersistenceCheck());}
+            if(command.StartsWith("global")) {SetGlobal(Int32.Parse(command.Substring(6)));}
+            else if(command=="handoff-tests") {StartCoroutine(HandoffTests());}
+            else if(command=="coexist") {ReportCoexist();}
+            else if(command=="switch-tests") {StartCoroutine(SwitchTests());}
+            else if(command=="persistence-check") {StartCoroutine(PersistenceCheck());}
             else if(command=="fresh-history") {FreshHistory();}
             else if(command=="history-status") {HistoryStatus();}
             else if(command=="v110-tests") {StartCoroutine(V110Tests());}

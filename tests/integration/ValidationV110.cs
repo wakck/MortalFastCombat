@@ -36,6 +36,7 @@ public sealed partial class ValidationPlugin
         Check((bool)AccessTools.Method(typeof(Plugin),"TrySkip").Invoke(plugin,null),"Persisted victory can start native skip");
         yield return new WaitForSecondsRealtime(6);
         Check(h.Run(run).victories.Count==1,"Skipped victory does not add a history entry");
+        Check(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name=="Story" && Mathf.Approximately(Time.timeScale,Convert.ToSingle(AssistantValue("GameSpeed"))),"Restarted skip restores current global speed in Story");
         Log("PERSISTENCE COMPLETE run="+run+" victories="+h.Run(run).victories.Count);
     }
     private void SetupV110()
@@ -144,7 +145,7 @@ public sealed partial class ValidationPlugin
             Check(resultApplications==expectedResults,"Current native victory results executed exactly once");
             Log("V110 result applications="+resultApplications);
             Check(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name!="Combat","Skip returns to story");
-            Check(Mathf.Approximately(Time.timeScale,1),"No speed leak after skip");
+            Check(Mathf.Approximately(Time.timeScale,Convert.ToSingle(AssistantValue("GameSpeed"))),"Global speed restored after skip");
         }catch(Exception e){Log("V110 FAILED "+e);}
         countResults=false;
         Log("V110 COMPLETE assertions="+assertions);

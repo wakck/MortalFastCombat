@@ -1,85 +1,112 @@
 # MortalFastCombat — 《活侠传》战斗加速与重复敌人跳过
 
-Windows x64 / Unity Mono / BepInEx 5.4.23.6，插件版本 **1.1.0**。
-适配 **Steam Build 26237817、Unity 2020.3.49f1**。仅作用于回合制单挑。
+当前版本 **1.1.2，Windows x64 / Unity Mono / BepInEx 6**。
+适配 Steam Build **26237817**、Unity **2020.3.49f1**。
 
-## 下载与安装
+**[下载 v1.1.2 共存安装包及 SHA-256 校验文件](https://github.com/wakck/MortalFastCombat/releases/tag/v1.1.2)**
 
-**[下载纯运行安装包](https://github.com/wakck/MortalFastCombat/raw/refs/heads/main/release/MortalFastCombat-1.1.0-Windows-x64-Runtime.zip)** · [SHA-256](release/MortalFastCombat-1.1.0-Windows-x64-Runtime.zip.sha256)
+本版安装包需要已安装指定的 **LOMAssistant 3.3.2 + BepInEx 6.0.0-be.789**，不包含助手或加载器。
+旧版 v1.1.0 使用 BepInEx 5，两套加载器不能直接叠加。迁移步骤见 [共存配置](docs/LOMASSISTANT.zh-CN.md)。
 
-1. 退出游戏，将安装包中的整个 `MortalFastCombat` 文件夹解压到游戏目录，与 `Mortal.exe` 同级。
-2. 在游戏目录打开 PowerShell，运行 `./MortalFastCombat/Install.ps1`。
-3. 正常从 Steam 启动游戏。默认 4 倍、Buff 空等待压缩和精简战斗提示开启。
+## 安装与更新
 
-已经通过本模组脚本安装并保留安装清单时，用包内 `Update.ps1` 更新；保留自己的配置和记录。
-已有其他 BepInEx 5 模组时，完整安装脚本会拒绝覆盖。可仅放入
-`dist/MortalFastCombat.dll` 至 `BepInEx/plugins/MortalFastCombat/`，并确保
-`BepInEx/config/BepInEx.cfg` 的 `[Chainloader]` 下为 `HideManagerGameObject = true`。
-手动安装不生成本包的卸载清单，不要用本包卸载脚本删除其他模组的加载器。
-
-## 功能与使用
-
-- 沿用游戏原“快速战斗”按钮，战斗设置提供相对于原速的 **2／4／8 倍**。
-- 合并已审查 Buff 协程的空等待，保留属性修改、触发顺序、连锁增删和清理。
-- 精简血条、内力条、数字提示与指令面板过渡，保留角色出招、输入与必要对话。
-- 同周目真实击败过的相同普通敌人，再次遇到时在首条指令前提供手动“跳过并获胜”。
-- 敌人的内部标识、全部战斗属性、技能参数、天赋等级、初始 Buff 与行动／难度规则严格匹配；不要求玩家与上次一样强。
-- 跳过调用当前战斗的原生胜利结算，不模拟回合，不补扣战斗消耗，不重放旧奖励。
-- 中途剧情事件、条件结算、条件对话以及无法完整识别的配置不提供跳过。
-
-关闭原快速战斗按钮会停止加速、Buff 压缩与提示精简；跳过按钮受模组总开关及独立选项控制。
-暂停时不推进压缩，退出战斗清理倍率。剧情、养成和即时制群战保持原行为。
-
-## 存档与记录
-
-仓库和运行安装包均不包含个人存档、胜利记录、配置、备份或测试运行数据，也不包含游戏原始 DLL。
-安装后才开始记录胜利，不推测安装前打败过哪些敌人。
-记录独立写入 `MortalFastCombat/data/<用户>/history-*.json`，原存档格式不变。
-新游戏创建独立周目；同周目回读旧档可复用胜利记录。未知旧存档默认独立，
-可在战斗设置中明确关联至同一周目。跳过、失败与退出不会新增胜利。
-
-配置生成于 `BepInEx/config/local.legendofmortal.fastcombat.cfg`。
-日志生成于 `BepInEx/LogOutput.log`。
-
-## 卸载
-
-退出游戏后，在游戏目录执行：
+1. 退出游戏，先按 [LOMAssistant 上游发布页](https://github.com/kevinnie2003/LOMAssistant/releases) 安装已验证的 3.3.2 配套运行环境；版本号及 DLL 指纹均需匹配。
+2. 将本安装包内整个 `MortalFastCombat` 文件夹解压到游戏目录，与 `Mortal.exe` 同级。
+3. 在游戏目录打开 PowerShell，首次安装执行：
 
 ```powershell
-./MortalFastCombat/Uninstall.ps1 -WhatIf
-./MortalFastCombat/Uninstall.ps1
+powershell -ExecutionPolicy Bypass -File .\MortalFastCombat\Install.ps1
 ```
 
-卸载按安装清单核对哈希，保留胜利记录和其他插件使用的共享加载器。
-仓库内的 `Clear-History.ps1` 可单独预览／清理模组记录；先用 `-WhatIf` 检查。
+已有加速插件时执行：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\MortalFastCombat\Update.ps1
+```
+
+首次安装把助手全局设为 **2 倍**，新用户战斗默认 **4 倍**；更新保留已有全局值、战斗倍率、配置和胜利记录。
+可用 `-GlobalSpeed 2` 明确指定全局值。脚本仍会关闭助手的流程压缩和单挑直接获胜，备份旧插件及相关配置，启用 `HideManagerGameObject=true`；不替换加载器或游戏 DLL。
+
+正常从 Steam 启动游戏即可。校验不匹配会停止安装，不会自动下载最新版助手或修改存档。
+
+## LOMAssistant 共存配置
+
+`BepInEx/config/LOMAssistant.cfg` 中：
+
+```ini
+[LOMAssistant]
+GameSpeed = 2
+EnableFlowSpeedup = false
+EnableCombatAssist = false
+```
+
+- **剧情、探索**：助手的全局倍速生效，可在其面板调整。
+- **回合制战斗**：助手暂时让出倍率，使用本模组的 **2／4／8 倍**，均相对于游戏原速，不再叠乘。
+- **胜败结算至场景退出**：保持倍率交接；返回剧情后由助手应用当前全局值。战中改全局值会在战后生效。
+- **暂停**：改变倍率不会解除暂停；助手原有的即时群战、自动对话免全局加速规则继续有效。
+
+助手可能仍按方法名显示 `ShowAction`、`NextInputAction` 重叠提示；对应输入保护和敌方行动预告，测试期间保留，详见共存文档。
+
+## 战斗功能
+
+- 沿用游戏“快速战斗”按钮，战斗设置可选 2／4／8 倍。
+- 合并已审查 Buff 的空帧等待，共享每帧 256 次推进／约 2 毫秒预算；保留触发顺序、连锁增删与清理。
+- 精简血条、内力条、数字提示和操作面板过渡，保留角色出招、玩家操作及必要对话。
+- 同周目真实击败过的相同普通敌人，再次遇到时可在首条指令前手动“跳过并获胜”。
+- 严格匹配敌人内部标识、属性、技能参数、天赋、初始 Buff、行动与难度规则；玩家变弱仍可跳过。
+- 调用本场原生胜利结算，不重放旧奖励；剧情事件、条件结算、条件对话或无法完整识别的战斗拒绝跳过。
+
+关闭快速战斗后，回合制战斗为 1 倍，停止 Buff 压缩与提示精简；跳过受模组总开关及独立选项控制。
+关闭模组总开关后保留原生快速战斗倍率；助手在 Combat 场景仍让出倍率，避免叠乘。
+
+## 存档、配置与隐私
+
+仓库及本版安装包不含个人存档、胜利记录、个人配置、备份、测试运行数据、日志或游戏程序集。
+测试源码和汇总结论可公开审查，运行数据不发布。
+
+配置由游戏首次加载插件后生成于 `BepInEx/config/local.legendofmortal.fastcombat.cfg`。
+胜利记录独立位于 `MortalFastCombat/data/<用户>/history-*.json`，不改原存档格式。
+仅记录安装后真实完成结算的胜利；跳过、失败及中断不新增记录。
+新游戏建立新周目，未知旧存档默认独立，可在战斗设置中手动关联。
+
+## 卸载与回退
+
+```powershell
+.\MortalFastCombat\Uninstall.ps1 -WhatIf
+.\MortalFastCombat\Uninstall.ps1
+# 需要同时移除本插件配置时，额外加 -RemoveConfiguration。
+```
+
+卸载仅移除清单内、指纹匹配的本插件，默认保留配置、胜利记录、助手和共享加载器。
+卸载后战斗速度由游戏及助手处理。独立记录仅在明确运行 `Clear-History.ps1` 时清理，不会自动删除。
+
+`Rollback.ps1` 可恢复最近一次安装前的插件、助手配置及加载器配置，不操作存档和胜利记录。
+若安装后配置已有变化，回退脚本会停止以保留后续设置，可从 `MortalFastCombat/backup/` 手动恢复所需文件。
 
 ## 从源码构建
 
-需要 Windows 自带 .NET Framework 4 C# 编译器和本机安装的兼容游戏，不需要 .NET SDK。
-BepInEx 构建依赖从本仓库已校验的干净运行包提取；游戏引用仅从本机读取，不会复制进仓库。
+需要 Windows .NET Framework 4 C# 编译器，以及本机兼容游戏和 BepInEx 6 依赖。
 
 ```powershell
-./Build.ps1 -GameDirectory '你的游戏安装目录'
-./Test.ps1
+.\Build.ps1 -GameDirectory '你的游戏目录'
+.\Test.ps1
 ```
 
-产物位于 `dist/MortalFastCombat.dll`。构建保留已经审查的程序集指纹和 Buff 白名单，
-不自动适配游戏更新。运行时指纹不匹配时停用增强并保留游戏原行为。
-测试工具说明见 [tests/README.md](tests/README.md)。
+产物为 `dist/MortalFastCombat.dll`，构建不会安装。游戏引用、助手及加载器均由本机读取，不进入仓库。
+本版不使用旧版的 BepInEx 5 依赖提取脚本。游戏和助手更新均需重新审查指纹。
 
-## 验证与限制
+## 验证范围
 
-相较 1.0.1，4／8 倍实测整回合额外缩短约 **6–7%**，血条等待降至 0 帧；
-后期战斗每组 **109 个状态检查点、1,387 次 Buff 移除通知**逐项一致。
-调度器与记录模块共 33 项自动断言，另有 33 项游戏内检查及进程重启持久化验证。
-完整结论和测试边界见 [验证报告](docs/VALIDATION.zh-CN.md)。
+1.1.2 在独立游戏副本、隔离存档中通过 30 项交接检查和 33 项既有功能检查。
+全局 2／4 倍与战斗 4／8 倍的三组对照，共 283 个状态检查点、3,139 次移除回调逐字节一致，5,482 次倍率采样无叠乘。
+已验证重启后的记录与跳过，以及胜败和跳过后恢复全局倍率。
 
-游戏的表现抖动会逐帧使用全局随机数；不同速度下普通游玩不保证重现同一战果。
-正式插件不修改随机系统。协程压缩共享每帧 256 次／约 2 毫秒预算，未知等待仍交由 Unity。
-新版本游戏需要重新审查适配。
+探索和群战免加速分支使用空场景探针，未执行完整探索或群战流程；未穷举助手全部非战斗功能。
+详见 [1.1.2 验证汇总](docs/VALIDATION-1.1.2.zh-CN.md)。
+游戏镜头抖动逐帧使用全局随机数，普通游玩不同速度不保证重现同一战果；正式插件不改随机系统。
 
 ## 第三方组件
 
-本项目为非官方模组，与游戏开发商及 Steam 无隶属关系。
-运行包内第三方组件的来源和许可见 [THIRD_PARTY.md](THIRD_PARTY.md) 与 [licenses/](licenses/)。
-本仓库未额外指定项目源码许可证；第三方许可只适用于对应组件。
+非官方模组，与游戏开发商及 Steam 无隶属关系。
+本版安装包仅包含本项目插件及维护文件，助手和 BepInEx 由用户另行安装。
+第三方说明见 [THIRD_PARTY.md](THIRD_PARTY.md)。本项目尚未单独指定源码许可证，第三方许可仅适用于对应组件。

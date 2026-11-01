@@ -5,6 +5,10 @@ validation/
 reports/
 github/
 tools/runtime/
+compatibility/
+**/artifacts/
+last-install.json
+package-checks/
 tools/cache/
 **/bin/
 **/obj/
@@ -27,3 +31,4 @@ test-mode.flag
 .env.*
 *.zip
 !release/MortalFastCombat-1.1.0-Windows-x64-Runtime.zip
+!release/MortalFastCombat-1.1.2-Windows-x64-LOMAssistant.zip

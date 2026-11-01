@@ -4,6 +4,7 @@ using System.IO;
 using System.Reflection;
 using System.Security.Cryptography;
 using BepInEx;
+using BepInEx.Unity.Mono;
 using BepInEx.Configuration;
 using HarmonyLib;
 using Mortal.Combat;
@@ -12,7 +13,8 @@ using UnityEngine.InputSystem;
 
 namespace MortalFastCombat
 {
-    [BepInPlugin(Guid, "Mortal Fast Combat", "1.1.0")]
+    [BepInPlugin(Guid, "Mortal Fast Combat", "1.1.2")]
+    [BepInDependency("LOMAssistant", BepInDependency.DependencyFlags.SoftDependency)]
     [BepInProcess("Mortal.exe")]
     public sealed partial class Plugin : BaseUnityPlugin
     {
@@ -73,6 +75,7 @@ namespace MortalFastCombat
                 harmony.Patch(originMove,prefix:new HarmonyMethod(AccessTools.Method(typeof(Plugin),"BeforeOriginMove")));
                 SetupPresentation();
                 SetupRepeatWins();
+                SetupAssistantSpeed();
                 compatible = true;
                 enhanced.SettingChanged += SettingsChanged;
                 multiplier.SettingChanged += SettingsChanged;
@@ -108,8 +111,10 @@ namespace MortalFastCombat
         {
             Plugin p = instance;
             if (p == null || !p.compatible) return;
+            p.AcquireAssistantSpeed();
             p.owner = __instance;
-            p.entryScale = Time.timeScale > 0 ? Time.timeScale : 1f;
+            p.entryScale = p.assistantHeld ? 1f : Time.timeScale > 0 ? Time.timeScale : 1f;
+            if(p.assistantHeld && Time.timeScale > 0) Time.timeScale = 1f;
             p.inCombat = true;
             p.fastRequested = false;
             p.ownsScale = false;
@@ -291,6 +296,7 @@ namespace MortalFastCombat
         private void OnDestroy()
         {
             OnDisable();
+            ReleaseAssistantSpeed();
             if (harmony != null) harmony.UnpatchSelf();
             if (guiFont != null) UnityEngine.Object.Destroy(guiFont);
             if (instance == this) instance = null;

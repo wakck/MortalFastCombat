@@ -75,8 +75,8 @@ public sealed partial class ValidationPlugin
             normal.Dispose();target.Dispose();fast.Dispose();fastTarget.Dispose();
             if(!equal)throw new Exception("Notification fixture state/order mismatch");
         }
-        File.WriteAllLines(Path.Combine(root,"v"+plugin.Info.Metadata.Version+"-notification-fixtures.txt"),rows.ToArray());
-        Log("NOTIFICATION FIXTURES COMPLETE "+plugin.Info.Metadata.Version);
+        File.WriteAllLines(Path.Combine(root,"v"+CaseVersion+"-notification-fixtures.txt"),rows.ToArray());
+        Log("NOTIFICATION FIXTURES COMPLETE "+CaseVersion);
     }
     private static string NotificationSnapshot(Fixture a,Fixture b) {
         List<string> items=new List<string>();

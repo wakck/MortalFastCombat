@@ -75,7 +75,8 @@ public sealed partial class ValidationPlugin
         Get<ConfigEntry<bool>>(plugin,"compress").Value=true;
         SystemSettings.SetCombatSpeedup(true);
         ended=false; turns=0; actionTime=0;
-        phases=new List<string>(); durations=new List<string>(); replayName=fast?"v"+plugin.Info.Metadata.Version+"-"+benchmarkSpeed+"x"+(ordinaryFixture?"-ordinary":"-late"):"original-controlled";
+        phases=new List<string>(); durations=new List<string>(); replayName=fast?CaseName+"v"+CaseVersion+"-"+benchmarkSpeed+"x"+(ordinaryFixture?"-ordinary":"-late"):"original-controlled";
+        replayName+="-global"+AssistantValue("GameSpeed");
         replaying=true;
         BeginTailProbe();
         QualitySettings.vSyncCount=0; Application.targetFrameRate=30;

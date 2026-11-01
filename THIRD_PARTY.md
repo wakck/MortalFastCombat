@@ -1,15 +1,21 @@
 # Third-party components
 
-The runtime bundle uses unmodified binaries from official Windows x64 BepInEx 5.4.23.6.
-A minimal game-specific loader setting enables HideManagerGameObject.
+The v1.1.2 LOMAssistant coexistence package distributes MortalFastCombat's plugin and
+maintenance files only. It does **not** redistribute LOMAssistant, BepInEx 6, HarmonyX,
+Unity, or game binaries. Install the reviewed LOMAssistant 3.3.2 / BepInEx 6 environment
+separately, under the upstream project's applicable terms.
 
-| Component | License | Upstream source |
-| --- | --- | --- |
-| BepInEx | MIT | https://github.com/BepInEx/BepInEx/tree/v5.4.23.6 |
-| HarmonyX | MIT | https://github.com/BepInEx/HarmonyX |
-| MonoMod | MIT | https://github.com/MonoMod/MonoMod |
-| Mono.Cecil | MIT | https://github.com/jbevain/cecil |
-| UnityDoorstop 4.6.0 | LGPL-2.1 | https://github.com/NeighTools/UnityDoorstop/tree/v4.6.0 |
+MortalFastCombat references BepInEx 6 and HarmonyX APIs, and reads local Unity/game
+assemblies for compilation. Source/build references do not transfer upstream licenses
+to this project's own source. No separate project source license has been assigned.
 
-Original license notices are in licenses/ and inside the runtime ZIP. Third-party licenses
-apply to their respective components. No game executable or game assembly is distributed.
+Upstream projects:
+
+- LOMAssistant: https://github.com/kevinnie2003/LOMAssistant
+- BepInEx: https://github.com/BepInEx/BepInEx
+- HarmonyX: https://github.com/BepInEx/HarmonyX
+
+The historical v1.1.0 runtime ZIP retained in `release/` contains unmodified official
+BepInEx 5.4.23.6 / UnityDoorstop 4.6.0 binaries. Its notices remain in `licenses/` and
+inside that ZIP: BepInEx, HarmonyX, MonoMod and Mono.Cecil (MIT); UnityDoorstop (LGPL-2.1).
+Those notices apply to their corresponding components, not to the v1.1.2 plugin.
