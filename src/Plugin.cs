@@ -13,7 +13,7 @@ using UnityEngine.InputSystem;
 
 namespace MortalFastCombat
 {
-    [BepInPlugin(Guid, "Mortal Fast Combat", "1.1.2")]
+    [BepInPlugin(Guid, "Mortal Fast Combat", "1.1.3")]
     [BepInDependency("LOMAssistant", BepInDependency.DependencyFlags.SoftDependency)]
     [BepInProcess("Mortal.exe")]
     public sealed partial class Plugin : BaseUnityPlugin
@@ -75,6 +75,7 @@ namespace MortalFastCombat
                 harmony.Patch(originMove,prefix:new HarmonyMethod(AccessTools.Method(typeof(Plugin),"BeforeOriginMove")));
                 SetupPresentation();
                 SetupRepeatWins();
+                SetupSkipHotkeys();
                 SetupAssistantSpeed();
                 compatible = true;
                 enhanced.SettingChanged += SettingsChanged;
@@ -157,6 +158,7 @@ namespace MortalFastCombat
             bool paused = Time.timeScale == 0;
             if (wasPaused && !paused && owner != null) owner.EnableSpeedTime(fastRequested);
             wasPaused = paused;
+            ConsumeSkipHotkey();
         }
         private static bool BeforeGameOver(CombatManager __instance, bool __0, ref IEnumerator __result)
         {
@@ -168,6 +170,7 @@ namespace MortalFastCombat
         private static bool BeforeNextInput(InputAction.CallbackContext __0)
         {
             Plugin p = instance;
+            if(p!=null && p.ConsumeSkipHotkey())return false;
             if (p == null || !p.compatible || !p.inCombat || __0.control == null || !(__0.control.device is Mouse) || Mouse.current == null) return true;
             float scale = OverlayScale();
             Vector2 position = Mouse.current.position.ReadValue();
@@ -286,6 +289,7 @@ namespace MortalFastCombat
         private static float OverlayScale() {return Mathf.Max(0.65f,Mathf.Min(Screen.width/1280f,Screen.height/720f));}
         private void OnDisable()
         {
+            skipHotkeyLatch.Reset();
             if (owner != null && compatible)
             {
                 ReleaseScale();

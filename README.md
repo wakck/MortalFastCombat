@@ -1,9 +1,11 @@
 # MortalFastCombat — 《活侠传》战斗加速与重复敌人跳过
 
-当前版本 **1.1.2，Windows x64 / Unity Mono / BepInEx 6**。
+当前版本 **1.1.3，Windows x64 / Unity Mono / BepInEx 6**。
 适配 Steam Build **26237817**、Unity **2020.3.49f1**。
 
-**[下载 v1.1.2 共存安装包及 SHA-256 校验文件](https://github.com/wakck/MortalFastCombat/releases/tag/v1.1.2)**
+**[下载 v1.1.3 共存安装包及 SHA-256 校验文件](https://github.com/wakck/MortalFastCombat/releases/tag/v1.1.3)**
+
+新增跳过战斗快捷键：**键盘 F10、手柄 R3（按下右摇杆）**，可独立禁用或改键。只有原有跳过按钮可用时才生效，长按不会重复结算；见 [快捷键说明](docs/HOTKEYS.zh-CN.md)。
 
 本版安装包需要已安装指定的 **LOMAssistant 3.3.2 + BepInEx 6.0.0-be.789**，不包含助手或加载器。
 旧版 v1.1.0 使用 BepInEx 5，两套加载器不能直接叠加。迁移步骤见 [共存配置](docs/LOMASSISTANT.zh-CN.md)。
@@ -96,6 +98,8 @@ EnableCombatAssist = false
 本版不使用旧版的 BepInEx 5 依赖提取脚本。游戏和助手更新均需重新审查指纹。
 
 ## 验证范围
+
+1.1.3 在隔离游戏副本中通过 47 项快捷键检查、33 项既有功能回归及两组 Buff 通知夹具；另通过 16 项按键状态机、20 项协程调度和 13 项胜利记录检查。键盘/手柄集成测试使用虚拟输入，未验证实体手柄及自定义 Steam Input 映射。详见 [1.1.3 验证汇总](docs/VALIDATION-1.1.3.zh-CN.md)。
 
 1.1.2 在独立游戏副本、隔离存档中通过 30 项交接检查和 33 项既有功能检查。
 全局 2／4 倍与战斗 4／8 倍的三组对照，共 283 个状态检查点、3,139 次移除回调逐字节一致，5,482 次倍率采样无叠乘。

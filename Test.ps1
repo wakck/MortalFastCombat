@@ -12,3 +12,8 @@ if($LASTEXITCODE -ne 0){throw 'History test compilation failed'}
 $fixture=Join-Path $PSScriptRoot ('validation\history-'+[Guid]::NewGuid().ToString('N'))
 & $historyOut $fixture | Tee-Object (Join-Path $PSScriptRoot 'reports\v110\history-tests.txt')
 if($LASTEXITCODE -ne 0){throw 'History tests failed'}
+$hotkeyOut=Join-Path $PSScriptRoot 'tests\SkipHotkeyLatchTests.exe'
+& $compiler /nologo /target:exe "/out:$hotkeyOut" (Join-Path $PSScriptRoot 'src\SkipHotkeyLatch.cs') (Join-Path $PSScriptRoot 'tests\SkipHotkeyLatchTests.cs')
+if($LASTEXITCODE -ne 0){throw 'Hotkey test compilation failed'}
+& $hotkeyOut | Tee-Object (Join-Path $PSScriptRoot 'reports\hotkey-latch-tests.txt')
+if($LASTEXITCODE -ne 0){throw 'Hotkey tests failed'}

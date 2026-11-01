@@ -1,4 +1,4 @@
-[CmdletBinding(SupportsShouldProcess,ConfirmImpact='High')]
+﻿[CmdletBinding(SupportsShouldProcess,ConfirmImpact='High')]
 param([string]$User)
 $ErrorActionPreference='Stop'
 if(Get-Process Mortal -ErrorAction SilentlyContinue){throw '请先退出游戏再清理胜利记录。'}

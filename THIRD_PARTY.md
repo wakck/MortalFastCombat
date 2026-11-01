@@ -1,6 +1,6 @@
 # Third-party components
 
-The v1.1.2 LOMAssistant coexistence package distributes MortalFastCombat's plugin and
+The v1.1.3 LOMAssistant coexistence package distributes MortalFastCombat's plugin and
 maintenance files only. It does **not** redistribute LOMAssistant, BepInEx 6, HarmonyX,
 Unity, or game binaries. Install the reviewed LOMAssistant 3.3.2 / BepInEx 6 environment
 separately, under the upstream project's applicable terms.
@@ -18,4 +18,4 @@ Upstream projects:
 The historical v1.1.0 runtime ZIP retained in `release/` contains unmodified official
 BepInEx 5.4.23.6 / UnityDoorstop 4.6.0 binaries. Its notices remain in `licenses/` and
 inside that ZIP: BepInEx, HarmonyX, MonoMod and Mono.Cecil (MIT); UnityDoorstop (LGPL-2.1).
-Those notices apply to their corresponding components, not to the v1.1.2 plugin.
+Those notices apply to their corresponding components, not to the v1.1.3 plugin.

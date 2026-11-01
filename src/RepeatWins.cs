@@ -71,10 +71,11 @@ namespace MortalFastCombat
         private void BeginEncounter(CombatManager manager)
         {
             encounter=manager;enemyKey=null;encounterRun=null;captured=false;firstReady=false;actionIssued=false;
+            skipHotkeyLatch.Reset();
             skipping=false;settling=false;pendingVictory=false;skipReason="等待首回合准备";mergeTarget=null;
         }
         private void CancelEncounter(CombatManager manager)
-        {if(encounter==manager){encounter=null;pendingVictory=false;firstReady=false;}}
+        {if(encounter==manager){encounter=null;pendingVictory=false;firstReady=false;skipHotkeyLatch.Reset();}}
         private static void BeforeRound(CombatManager __instance)
         {
             Plugin p=instance;if(p==null || !p.compatible || p.encounter!=__instance || p.captured)return;
@@ -100,6 +101,7 @@ namespace MortalFastCombat
         private static bool BeforeAction(CombatManager __instance)
         {
             Plugin p=instance;if(p==null || !p.compatible || p.encounter!=__instance)return true;
+            if(p.ConsumeSkipHotkey())return false;
             if(p.settling || p.skipping)return false;
             p.actionIssued=true;p.firstReady=false;return true;
         }
@@ -148,7 +150,7 @@ namespace MortalFastCombat
         {
             if(!enhanced.Value || !repeatWins.Value || !firstReady || actionIssued || settling)return;
             if(CanSkip()) {
-                if(GUI.Button(new Rect(x,46,380,32),"已在本周目击败 · 跳过并获胜",buttonStyle))TrySkip();
+                if(GUI.Button(new Rect(x,46,380,32),"已击败 · 跳过并获胜  ["+SkipHotkeyHint()+"]",buttonStyle))TrySkip();
             }else {
                 Color previous=GUI.color;GUI.color=new Color(0.04f,0.05f,0.07f,0.94f);
                 GUI.DrawTexture(new Rect(x,46,380,38),Texture2D.whiteTexture);GUI.color=previous;
@@ -159,7 +161,7 @@ namespace MortalFastCombat
         {
             bool value=GUI.Toggle(new Rect(x+12,238,350,26),presentation.Value,"精简战斗提示（保留出招）",toggleStyle);
             if(value!=presentation.Value)presentation.Value=value;
-            value=GUI.Toggle(new Rect(x+12,272,350,26),repeatWins.Value,"提供重复敌人跳过按钮",toggleStyle);
+            value=GUI.Toggle(new Rect(x+12,272,350,26),repeatWins.Value,"重复敌人跳过（"+SkipHotkeyHint()+"）",toggleStyle);
             if(value!=repeatWins.Value)repeatWins.Value=value;
             if(history==null){GUI.Label(new Rect(x+12,310,350,56),"首次读取存档后建立周目记录。",labelStyle);return;}
             if(!history.Healthy){GUI.Label(new Rect(x+12,310,350,90),history.Error,labelStyle);return;}

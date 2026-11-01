@@ -1,4 +1,4 @@
-// Test-only plugin. Installed temporarily for -fastcombat-test-profile launches.
+﻿// Test-only plugin. Installed temporarily for -fastcombat-test-profile launches.
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -219,7 +219,8 @@ public sealed partial class ValidationPlugin : BaseUnityPlugin
         try {
             CombatManager manager=CombatManager.Instance;
             if(command=="quit") { Application.Quit(); return; }
-            if(command.StartsWith("global")) {SetGlobal(Int32.Parse(command.Substring(6)));}
+            if(command=="hotkey-tests") {StartCoroutine(HotkeyTests());}
+            else if(command.StartsWith("global")) {SetGlobal(Int32.Parse(command.Substring(6)));}
             else if(command=="handoff-tests") {StartCoroutine(HandoffTests());}
             else if(command=="coexist") {ReportCoexist();}
             else if(command=="switch-tests") {StartCoroutine(SwitchTests());}

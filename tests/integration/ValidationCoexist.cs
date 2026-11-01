@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.IO;
 using System.Reflection;
@@ -14,7 +14,7 @@ public sealed partial class ValidationPlugin
 {
 #if BEPINEX6
     private const string CaseName="handoff-bep6-";
-    private const string CaseVersion="1.1.2";
+    private const string CaseVersion="1.1.3";
 #else
     private const string CaseName="baseline-bep5-";
     private const string CaseVersion="1.1.0";

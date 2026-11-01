@@ -47,7 +47,7 @@ $assistantText=Set-IniValue $assistantText 'LOMAssistant' 'GameSpeed' $choice
 $assistantText=Set-IniValue $assistantText 'LOMAssistant' 'EnableFlowSpeedup' 'false'
 $assistantText=Set-IniValue $assistantText 'LOMAssistant' 'EnableCombatAssist' 'false'
 $loaderText=Set-IniValue (Read-TextOrEmpty (Join-Path $game $loaderCfg)) 'Chainloader' 'HideManagerGameObject' 'true'
-$backup=Join-Path $game ('MortalFastCombat\backup\install-1.1.2-'+(Get-Date -Format yyyyMMddHHmmss)+'-'+[Guid]::NewGuid().ToString('N').Substring(0,8))
+$backup=Join-Path $game ('MortalFastCombat\backup\install-1.1.3-'+(Get-Date -Format yyyyMMddHHmmss)+'-'+[Guid]::NewGuid().ToString('N').Substring(0,8))
 New-Item -ItemType Directory -Path $backup -Force|Out-Null
 $state=@()
 foreach($relative in @($pluginRel,$assistantCfg,$loaderCfg,$manifestRel)){
@@ -65,10 +65,10 @@ try{
     @([pscustomobject]@{Path=$pluginRel;Hash=$expected;Kind='Plugin'})|ConvertTo-Json|Set-Content -LiteralPath $manifest -Encoding utf8
     foreach($entry in $state){$entry.AfterHash=(Get-FileHash -LiteralPath (Join-Path $game $entry.Path)).Hash}
     $state|ConvertTo-Json|Set-Content -LiteralPath (Join-Path $backup 'restore.json') -Encoding utf8
-    Write-Utf8 (Join-Path $game 'MortalFastCombat\last-install.json') ([pscustomobject]@{Backup=$backup.Substring($game.Length+1);Version='1.1.2'}|ConvertTo-Json)
+    Write-Utf8 (Join-Path $game 'MortalFastCombat\last-install.json') ([pscustomobject]@{Backup=$backup.Substring($game.Length+1);Version='1.1.3'}|ConvertTo-Json)
 }catch{
     foreach($entry in $state){$path=Get-SafeTarget $game $entry.Path;if($entry.Existed){Copy-Item -LiteralPath (Join-Path $backup $entry.Path) -Destination $path -Force}elseif(Test-Path -LiteralPath $path){Remove-Item -LiteralPath $path}}
     throw
 }
-"已安装 1.1.2。剧情/探索全局 $choice 倍；战斗独立 2/4/8 倍。首次默认战斗 4 倍，已有本插件配置与胜利记录保留。"
+"已安装 1.1.3。剧情/探索全局 $choice 倍；战斗独立 2/4/8 倍。首次默认战斗 4 倍，已有本插件配置与胜利记录保留。"
 "旧插件和相关配置备份：$backup"

@@ -1,4 +1,4 @@
-// TEST ONLY. Never deploy to the normal game. Changes are in-memory, before game startup.
+﻿// TEST ONLY. Never deploy to the normal game. Changes are in-memory, before game startup.
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -43,6 +43,7 @@ public static class IsolatedPaths
             foreach(MethodDefinition method in app.Methods) {
                 if(method.Name=="get_persistentDataPath"){Return(method,Persistent);found=true;}
                 if(method.Name=="get_temporaryCachePath")Return(method,Path.Combine(Root,"sandbox/cache"));
+                if(method.Name=="get_isFocused" && File.Exists(Path.Combine(Root,"hotkey-virtual-input.flag"))){Return(method,null);method.Body.Instructions[0].OpCode=OpCodes.Ldc_I4_1;}
             }
             if(!found)Environment.FailFast("Persistent path getter not found");
             foreach(MethodDefinition method in m.GetType("UnityEngine.PlayerPrefs").Methods)

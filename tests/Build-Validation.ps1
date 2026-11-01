@@ -7,7 +7,7 @@ $mod=Split-Path $PSScriptRoot -Parent
 $out=Join-Path $PSScriptRoot 'artifacts'
 New-Item -ItemType Directory -Path $out -Force|Out-Null
 $compiler=Join-Path $env:WINDIR 'Microsoft.NET\Framework64\v4.0.30319\csc.exe'
-$refs=@('mscorlib.dll','System.dll','System.Core.dll','netstandard.dll','UnityEngine.dll','UnityEngine.CoreModule.dll','UnityEngine.JSONSerializeModule.dll','UnityEngine.UI.dll','UnityEngine.UIModule.dll','Mortal.Core.dll','Mortal.Combat.dll')|ForEach-Object {'/reference:'+(Join-Path $managed $_)}
+$refs=@('mscorlib.dll','System.dll','System.Core.dll','netstandard.dll','UnityEngine.dll','UnityEngine.CoreModule.dll','UnityEngine.JSONSerializeModule.dll','UnityEngine.UI.dll','UnityEngine.UIModule.dll','UnityEngine.IMGUIModule.dll','Unity.InputSystem.dll','Mortal.Core.dll','Mortal.Combat.dll')|ForEach-Object {'/reference:'+(Join-Path $managed $_)}
 $refs+='/reference:'+(Join-Path $mod 'dist\MortalFastCombat.dll')
 $refs+=@('BepInEx.Core.dll','BepInEx.Unity.Mono.dll','0Harmony.dll')|ForEach-Object {'/reference:'+(Join-Path $core $_)}
 $sources=Get-ChildItem -LiteralPath (Join-Path $PSScriptRoot 'integration') -Filter 'Validation*.cs'|ForEach-Object FullName

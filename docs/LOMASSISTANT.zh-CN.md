@@ -5,7 +5,7 @@
 | 项目 | 要求 |
 |---|---|
 | 游戏 | Steam Build 26237817，Unity 2020.3.49f1，Windows x64 Mono |
-| 加速插件 | MortalFastCombat 1.1.2，原生 BepInEx 6 |
+| 加速插件 | MortalFastCombat 1.1.3，原生 BepInEx 6 |
 | 助手 | LOMAssistant 3.3.2 |
 | 加载器 | 助手配套的 BepInEx 6.0.0-be.789 |
 
@@ -46,7 +46,7 @@ EnableCombatAssist = false
    若手动环境中现有插件指纹未知，脚本会停止，不会强行覆盖。
 4. 按需从备份恢复自己的加速配置文件。此文件和独立胜利记录格式保持兼容；不要恢复旧的加载器文件。
 
-从 BepInEx 6 的本地 1.1.1 / 1.1.2 更新，无需替换加载器；运行 `Update.ps1` 即可。
+从 BepInEx 6 的本地 1.1.1 / 1.1.2 / 1.1.3 更新，无需替换加载器；运行 `Update.ps1` 即可。
 更新默认保留助手现有全局值；希望开启 2 倍时用 `Update.ps1 -GlobalSpeed 2`，或在助手面板调整。
 
 本版脚本只拥有自己的插件，新的卸载清单不认领助手或加载器。旧清单完整保存在本地备份，回退可恢复。
@@ -63,6 +63,6 @@ EnableCombatAssist = false
 共存 ZIP 包含插件、安装/更新/卸载/回退脚本、通用兼容性清单、中文说明及包内文件哈希。
 不附助手、加载器、游戏文件、任何人的存档/胜利记录/配置、测试 DLL、测试数据或日志。
 
-安装前的插件与相关配置保存在 `MortalFastCombat/backup/install-1.1.2-*`。
+安装前的插件与相关配置保存在 `MortalFastCombat/backup/install-1.1.3-*`。
 退出游戏后运行 `Rollback.ps1` 回退。若配置后来变化，脚本会停止；手动恢复时请只恢复自己需要的插件或配置，避免覆盖后续设置。
 不需要回滚存档或删除胜利记录。
